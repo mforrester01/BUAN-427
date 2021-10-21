@@ -1,0 +1,81 @@
+---
+title: "Machine Learning"
+author: "Mike Forrester"
+date: "10/20/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## **End to End Machine Learning Project**
+
+**The purpose of your analysis is to predict "Extremely Low Income Units" using the other variables as predictors**
+
+Import the Housing_New_York_Units_by_Building.csv dataset, make sure the Total Units is read like a number
+
+```{python}
+import pandas as pd
+data = pd.read_csv('C:\Buan 427\DATASETS\Housing_New_York_Units_by_Building.csv', thousands = ",")
+```
+
+Summarize the data: how many rows, columns; the types of each column, the head of the data.
+
+```{python}
+data.info()
+```
+
+Calculate correlations between "Extremely Low Income Units" and the rest of the values. What values have the highest correlations to "Extremely Low Income Units"?
+
+```{python}
+corr_matrix = data.corr()
+corr_matrix["Extremely Low Income Units"].sort_values(ascending = False)
+```
+
+Write code to load Total units as a number, then divide the relevant numeric fields by Total units. Write code to create and store new columns perc_1_br, perc_rentals, perc_studio, Borough in a new DataFrame df_small
+
+```{Python}
+df_small = pd.DataFrame()
+
+df_small['Perc_eli'] = data['perc_eli'] = data["Extremely Low Income Units"]/data["Total Units"]
+
+df_small['Perc_1_br'] = data["1-BR Units"]/data["Total Units"]
+
+df_small['Perc_studio'] = data["Studio Units"]/data["Total Units"]
+
+df_small['Perc_rental'] = data["Counted Rental Units"]/data["Total Units"]
+
+df_small['Borough'] = data['Borough']
+
+#Split the data into train and test using the train_test_split from sklean.
+
+from sklearn.model_selection import train_test_split
+
+train_set, test_set = train_test_split(df_small, test_size = 0.2,random_state = 42)
+
+#Plot a map that shows the location of buildings and variables "1-BR Units" and "Extremely Low Income Units" represented on the map. You decide the best way to represent these variables, but the resulting map should help you distinguish the location of the "Extremely Low Income Units" + the connection to "1-BR Units. Create a multivariate regression model to predict Percentage of Extreme Low Income Housing" 
+
+from sklearn.linear_model import LinearRegression
+algo = LinearRegression()
+
+x = train_set[['Perc_studio','Perc_1_br','Perc_rental']]
+y= train_set['Perc_eli']
+
+lineEstimate = algo.fit(x3,y)
+
+#Caluclate MSE of model on train set
+yhat = lineEstimate.predict(x)
+MSE_model = mean_squared_error(y,yhat)
+
+#Apply the model to the test set
+
+test_x = test_set[['Perc_studio','Perc_1_br','Perc_rental']]
+test_y = test_set['Perc_eli']
+test_hat = lineEstimate.predict(test_x)
+MSE_test = mean_squared_error(test_y,test_hat)
+```
+
+
+
+
